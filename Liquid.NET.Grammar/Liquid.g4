@@ -126,11 +126,15 @@ for_else:			TAGSTART ELSE_TAG TAGEND block* ;
 
 for_block:			block* ;
 
-for_params: 		PARAM_REVERSED | for_param_offset | for_param_limit ; // todo: limit to one of each?
+for_params: 		PARAM_REVERSED | PARAM_OFFSET COLON VARIABLETEST | PARAM_LIMIT COLON VARIABLETEST ; // todo: limit to one of each?
 
-for_param_offset:	PARAM_OFFSET COLON (variable | NUMBER) ;
+for_param_offset:	PARAM_OFFSET COLON VARIABLETEST ;
 
-for_param_limit:	PARAM_LIMIT COLON (variable | NUMBER)  ;
+//for_param_offset_value: LABEL | NUMBER;
+
+for_param_limit:	PARAM_LIMIT COLON VARIABLETEST  ;
+
+//for_param_limit_value:  LABEL | NUMBER;
 
 for_label:			LABEL ;
 

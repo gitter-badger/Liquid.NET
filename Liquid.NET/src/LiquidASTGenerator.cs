@@ -307,6 +307,17 @@ namespace Liquid.NET
 
         }
 
+//        public override void EnterFor_param_limit_value(LiquidParser.For_param_limit_valueContext context)
+//        {
+//            base.EnterFor_param_limit_value(context);
+//            Console.WriteLine("For limit" + context.GetText());
+//        }
+//
+//        public override void EnterFor_param_offset_value(LiquidParser.For_param_offset_valueContext context)
+//        {
+//            base.EnterFor_param_offset_value(context);
+//            Console.WriteLine("For offset" + context.GetText());
+//        }
 
         /// <summary>
         /// Put the parameters on the current for block in the "for block" stack.
@@ -321,36 +332,47 @@ namespace Liquid.NET
             {
                 forBlock.Reversed = new BooleanValue(true);
             }
-            if (context.for_param_limit() != null)
-            {
-                if (context.for_param_limit().NUMBER() != null)
-                {
-                    forBlock.Limit = CreateObjectSimpleExpressionNode(
-                        CreateIntNumericValueFromString(context.for_param_limit().NUMBER().ToString()));
-                }
-                else if (context.for_param_limit().variable() != null)
-                {
-                    StartNewLiquidExpressionTree(x => forBlock.Limit = x);
-                    StartCapturingVariable(context.for_param_limit().variable());
-                    MarkCurrentExpressionComplete();
-                }
-                //forBlock.Limit = CreateIntNumericValueFromString(context.for_param_limit().NUMBER().ToString());
-            }
-            if (context.for_param_offset() != null)
-            {
-                if (context.for_param_offset().NUMBER() != null)
-                {
-                    forBlock.Offset = CreateObjectSimpleExpressionNode(
-                        CreateIntNumericValueFromString(context.for_param_offset().NUMBER().ToString()));
-                }
-                else if (context.for_param_offset().variable() != null)
-                {
-                    StartNewLiquidExpressionTree(x => forBlock.Offset = x);
-                    StartCapturingVariable(context.for_param_offset().variable());
-                    MarkCurrentExpressionComplete();
-                }
+           // if (context.for_param_limit() != null) {
+            
+                Console.WriteLine("TODO: FIx this");
+//                if (context.for_param_limit().for_param_limit_value().NUMBER() != null)
+//                {
+//                    forBlock.Limit = CreateObjectSimpleExpressionNode(
+//                        CreateIntNumericValueFromString(context.for_param_limit().for_param_limit_value().NUMBER().ToString()));
+//                }
+//                //else if (context.for_param_limit().for_param_limit_value().variable() != null)
+//                else if (context.for_param_limit().for_param_limit_value().LABEL() != null)
+//                {
+//                    StartNewLiquidExpressionTree(x => forBlock.Limit = x);
+//                    //StartCapturingVariable(context.for_param_limit().for_param_limit_value().variable());
+//                    forBlock.Offset = CreateObjectSimpleExpressionNode(
+//                        CreateIntNumericValueFromString(context.for_param_limit().for_param_limit_value().LABEL().ToString()));
+//                    MarkCurrentExpressionComplete();
+//                }
+//                //forBlock.Limit = CreateIntNumericValueFromString(context.for_param_limit().NUMBER().ToString());
+            //}
+            //if (context.for_param_offset() != null)
+           // {
+        //Console.WriteLine("TODO: FIx this");
+//                var forParamOffsetContext = context.for_param_offset();
+//                var forParamOffsetValueContext = forParamOffsetContext.for_param_offset_value();
+//                var numberNode = forParamOffsetValueContext.NUMBER();
+//                if (numberNode != null)
+//                {
+//                    forBlock.Offset = CreateObjectSimpleExpressionNode(
+//                        CreateIntNumericValueFromString(forParamOffsetValueContext.NUMBER().ToString()));
+//                }
+//                //else if (forParamOffsetValueContext.variable() != null)
+//                else if (forParamOffsetValueContext.LABEL() != null)
+//                {
+//                    StartNewLiquidExpressionTree(x => forBlock.Offset = x);
+//                    //StartCapturingVariable(forParamOffsetValueContext.variable());
+//                    forBlock.Offset = CreateObjectSimpleExpressionNode(
+//                      CreateIntNumericValueFromString(forParamOffsetValueContext.LABEL().ToString()));
+//                    MarkCurrentExpressionComplete();
+//                }
                 //
-            }
+           // }
         }
 
         /// <summary>

@@ -68,6 +68,7 @@ GENERATORSTART : 		'(';
 GENERATOREND :			')';
 GENERATORRANGE :		'..';
 
+VARIABLETEST:			LABEL | NUMBER;
 
 // SEE: http://stackoverflow.com/questions/18782388/antlr4-lexer-error-reporting-length-of-offending-characters#answer-18797779
 ERRORCHAR :				. ;
@@ -106,6 +107,8 @@ BOOLEAN1:				BOOLEAN -> type(BOOLEAN);
 STRING1:				STRING -> type(STRING);
 
 LABEL1:					LABEL -> type(LABEL);
+
+VARIABLETEST1:			VARIABLETEST -> type(VARIABLETEST);
 
 ARRAYSTART1 :			'[' -> pushMode(INARRAYINDEX), type(ARRAYSTART) ;
 ARRAYEND1 :				']' -> type(ARRAYEND);
@@ -201,6 +204,9 @@ PERIOD2 :				PERIOD -> type(PERIOD) ;
 STRING2:				STRING -> type(STRING);
 LABEL2:					LABEL -> type(LABEL);
 GENERATORRANGE1:		GENERATORRANGE -> type(GENERATORRANGE) ;
+
+VARIABLETEST2:			VARIABLETEST -> type(VARIABLETEST);
+
 
 END:					'end' ;
 
