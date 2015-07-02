@@ -275,6 +275,23 @@ namespace Liquid.NET.Tests.Tags
         }
 
         [Test]
+        public void It_Can_()
+        {
+            // Arrange
+            TemplateContext ctx = new TemplateContext();
+            ctx.Define("limit", new NumericValue(3));
+            ctx.Define("offset", new NumericValue(1));
+            var template = LiquidTemplate.Create("Result : {% for for in \"Hello\" %}<li>{{ test }}</li>{% endfor %}");
+
+            // Act
+            String result = template.Render(new TemplateContext());
+
+            // Assert
+            Assert.That(result, Is.EqualTo("Result : Hello"));
+
+        }
+
+        [Test]
         public void It_Can_Use_Reserved_Words()
         {
             // Arrange

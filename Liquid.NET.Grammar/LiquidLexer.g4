@@ -1,10 +1,21 @@
 lexer grammar LiquidLexer;
-@lexer::header {#pragma warning disable 3021}
+@lexer::header {
+#pragma warning disable 3021
+using System;
+using System.Collections.Generic;	
+
+}
 
 @lexer::members {
 	public static readonly int WHITESPACE = 1;
  	int arraybracketcount = 0;
-
+	IDictionary<String,int> keywords = new Dictionary<String, int> {
+					{ "for", LiquidParser.FOR_TAG },
+					{ "in", LiquidParser.FOR_IN },
+					{ "offset", LiquidParser.PARAM_OFFSET },
+					{ "limit", LiquidParser.PARAM_LIMIT },
+					{ "endfor", LiquidParser.ENDFOR_TAG },
+				};
 }
 
 COMMENT :				COMMENTSTART ( COMMENT | . )*? COMMENTEND -> skip ; // TODO: skip
@@ -140,6 +151,17 @@ TAGEND :				'%}'			-> popMode ;
 
 //TOKEN:					VARIABLENAME;
 
+// SEE: The Definitive Antlr4 Reference pg. 188
+TOKEN:		LABEL {
+	Console.WriteLine("LOOKING UP "+Text);
+
+	if ( keywords.ContainsKey(Text) ) {
+		Type = keywords[Text];
+	} else {
+		Type = VARIABLENAME;
+	};
+}; //-> type(VARIABLENAME);
+
 INCLUDE_TAG :			'include' ;
 WITH:					'with' ;
 IF_TAG :				'if' ;
@@ -212,17 +234,17 @@ COLON2 :				COLON -> type(COLON);
 PERIOD2 :				PERIOD -> type(PERIOD) ;
 STRING2:				STRING -> type(STRING);
 
-VARIABLENAME2:			(LABEL | KEYWORDS) -> type(VARIABLENAME);
+//VARIABLENAME2:			(LABEL | KEYWORDS) -> type(VARIABLENAME);
 //LABEL2:					LABEL -> type(LABEL);
 
 GENERATORRANGE1:		GENERATORRANGE -> type(GENERATORRANGE) ;
 
 END:					'end' ;
 
-KEYWORDS: INCLUDE_TAG | WITH | IF_TAG | UNLESS_TAG | CASE_TAG | WHEN_TAG | ENDCASE_TAG | ELSIF_TAG | ELSE_TAG |
-	ENDIF_TAG | ENDUNLESS_TAG | FOR_TAG | FOR_IN | BREAK_TAG | CONTINUE_TAG | PARAM_REVERSED | PARAM_OFFSET | PARAM_LIMIT |
-	ENDFOR_TAG | CYCLE_TAG | ASSIGN_TAG | CAPTURE_TAG | ENDCAPTURE_TAG | INCREMENT_TAG | DECREMENT_TAG | MACRO_TAG | ENDMACRO_TAG | 
-	IFCHANGED_TAG | ENDIFCHANGED_TAG | TABLEROW_TAG | ENDTABLEROW_TAG | TABLEROW_TAG_COLS| END | NOT | CONTAINS | AND;
+//KEYWORDS: INCLUDE_TAG | WITH | IF_TAG | UNLESS_TAG | CASE_TAG | WHEN_TAG | ENDCASE_TAG | ELSIF_TAG | ELSE_TAG |
+//	ENDIF_TAG | ENDUNLESS_TAG | FOR_TAG | FOR_IN | BREAK_TAG | CONTINUE_TAG | PARAM_REVERSED | PARAM_OFFSET | PARAM_LIMIT |
+//	ENDFOR_TAG | CYCLE_TAG | ASSIGN_TAG | CAPTURE_TAG | ENDCAPTURE_TAG | INCREMENT_TAG | DECREMENT_TAG | MACRO_TAG | ENDMACRO_TAG | 
+//	IFCHANGED_TAG | ENDIFCHANGED_TAG | TABLEROW_TAG | ENDTABLEROW_TAG | TABLEROW_TAG_COLS| END | NOT | CONTAINS | AND;
 
 
 WS2 :					[ \t\r\n]+ -> skip ;

@@ -272,9 +272,13 @@ namespace Liquid.NET
             base.EnterFor_tag(context);
             //Console.WriteLine("Entering FOR tag");
 
+            var localVariableLabel = context.for_label().ToString();
+            //var localVariableToken = localVariableLabel.TOKEN();
+
             var forBlock = new ForBlockTag
             {
-                LocalVariable = context.for_label().VARIABLENAME().ToString()
+                //LocalVariable = localVariableToken.ToString()
+                LocalVariable = localVariableLabel
             };
             AddNodeToAST(forBlock);
 
@@ -1094,7 +1098,7 @@ namespace Liquid.NET
         private void StartCapturingVariable(LiquidParser.VariableContext variableContext)
         {
             //Console.WriteLine("START Capturing variable " + variableContext.LABEL().GetText());
-            var varname = variableContext.VARIABLENAME().GetText();
+            var varname = variableContext.TOKEN().GetText();
             IEnumerable<FilterSymbol> indexLookupFilters =
                 variableContext.objectvariableindex().Select(AddIndexLookupFilter);
             AddExpressionToCurrentExpressionBuilder(new VariableReference(varname));

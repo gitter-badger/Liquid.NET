@@ -25,8 +25,6 @@ rawtext:			TEXT+ ;
 // {% Parse tags %}
 
 tag:				raw_tag
-					| custom_blocktag  //{System.String.Equals("end" + custom_block_start_tag().GetText(), custom_block_end_tag().GetText())}?
-					| custom_tag
 					| if_tag
 					| for_tag
 					| cycle_tag
@@ -40,8 +38,10 @@ tag:				raw_tag
 					| include_tag
 					| break_tag
 					| continue_tag
-					| macro_tag
 					| ifchanged_tag
+					| macro_tag
+					//| custom_blocktag  //{System.String.Equals("end" + custom_block_start_tag().GetText(), custom_block_end_tag().GetText())}?
+					//| custom_tag
 					;
 
 // text wrapped in a raw tag
@@ -137,7 +137,7 @@ for_param_offset:	PARAM_OFFSET COLON (variable | NUMBER) ;
 
 for_param_limit:	PARAM_LIMIT COLON (variable | NUMBER)  ;
 
-for_label:			VARIABLENAME ;
+for_label:			TOKEN ;
 
 for_iterable:		variable | STRING  | generator;
 
@@ -153,7 +153,7 @@ tablerow_cols:		TABLEROW_TAG_COLS COLON (variable | NUMBER) ;
 
 tablerow_iterable:	variable | STRING  | generator;
 
-variable:			VARIABLENAME objectvariableindex* ;
+variable:			TOKEN objectvariableindex* ;
 
 generator:			PARENOPEN generator_index GENERATORRANGE generator_index PARENCLOSE ;
 
