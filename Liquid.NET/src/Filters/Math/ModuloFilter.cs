@@ -12,7 +12,10 @@ namespace Liquid.NET.Filters.Math
     {
         private readonly NumericValue _operand;
 
-        public ModuloFilter(NumericValue operand) { _operand = operand; }
+        public ModuloFilter(NumericValue operand)
+        {
+            _operand = operand ?? new NumericValue(0);
+        }
 
         public override LiquidExpressionResult ApplyTo(ITemplateContext ctx, NumericValue numericValue)
         {
@@ -27,5 +30,11 @@ namespace Liquid.NET.Filters.Math
             var val = (int) (numericValue.DecimalValue % _operand.DecimalValue);
             return LiquidExpressionResult.Success(new NumericValue(val));
         }
+
+        public override LiquidExpressionResult ApplyToNil(ITemplateContext ctx)
+        {
+            return ApplyTo(ctx, new NumericValue(0));
+        }
+
     }
 }

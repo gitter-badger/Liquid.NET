@@ -24,5 +24,7 @@ namespace Liquid.NET.Filters.Math
                 return LiquidExpressionResult.Success(new NumericValue(result));
             }
         }
+
+
     }
 }

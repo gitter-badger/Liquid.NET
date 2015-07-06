@@ -10,7 +10,7 @@ namespace Liquid.NET.Filters.Strings
 
         public RemoveFilter(StringValue replacement)
         {
-            _replacement = replacement;
+            _replacement = replacement ?? new StringValue(""); ;
         }
         // TODO: use StringUtils.Eval?
         public override LiquidExpressionResult ApplyTo(ITemplateContext ctx, StringValue liquidStringExpression)

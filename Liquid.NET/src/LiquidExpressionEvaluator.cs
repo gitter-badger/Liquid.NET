@@ -49,14 +49,18 @@ namespace Liquid.NET
             ITemplateContext templateContext)
         {
             // until the expression is changed to an option type, an expression may be null.  If it's null, it evaluates to null.
+            LiquidExpressionResult objResult;
             if (expression.Expression == null)
             {
                 //return null;
-                return LiquidExpressionResult.Success(new None<IExpressionConstant>());
+                objResult = LiquidExpressionResult.Success(new None<IExpressionConstant>());
+
             }
+            else
+            {
 
-
-            LiquidExpressionResult objResult = expression.Expression.Eval(templateContext, leaves);
+                objResult = expression.Expression.Eval(templateContext, leaves);
+            }
             if (objResult.IsError)
             {
                 return objResult;

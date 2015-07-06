@@ -16,7 +16,7 @@ namespace Liquid.NET.Filters.Math
 
         public TimesFilter(NumericValue addend1)
         {
-            _addend1 = addend1;
+            _addend1 = addend1 ?? new NumericValue(0);
         }
 
 
@@ -24,6 +24,11 @@ namespace Liquid.NET.Filters.Math
         {
             var result = _addend1.DecimalValue * addend2.DecimalValue;
             return MathHelper.GetReturnValue(result, _addend1, addend2);
+        }
+
+        public override LiquidExpressionResult ApplyToNil(ITemplateContext ctx)
+        {
+            return ApplyTo(ctx, new NumericValue(0));
         }
     }
 }

@@ -13,10 +13,14 @@ namespace Liquid.NET.Filters.Strings
         {
             String before = ValueCaster.RenderAsString(liquidExpression);
 
-            if (String.IsNullOrWhiteSpace(before))
+            if (before == null)
             {
                 return new StringValue("");
             }
+            //if (String.IsNullOrWhiteSpace(before))
+            //{
+                //return new StringValue("");
+            //}
             return new StringValue(f(before));
         }
 

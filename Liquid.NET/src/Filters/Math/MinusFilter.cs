@@ -9,17 +9,18 @@ namespace Liquid.NET.Filters.Math
 
         public MinusFilter(NumericValue operand)
         {
-            _operand = operand;
+            _operand = operand ?? new NumericValue(0);
         }
 
         public override LiquidExpressionResult ApplyTo(ITemplateContext ctx, NumericValue liquidExpression)
         {
-            if (_operand == null)
-            {
-                return LiquidExpressionResult.Error("The operand to \"" + Name + "\" is missing.");
-            }
             var result = liquidExpression.DecimalValue - _operand.DecimalValue;
             return MathHelper.GetReturnValue(result, liquidExpression, _operand);
+        }
+
+        public override LiquidExpressionResult ApplyToNil(ITemplateContext ctx)
+        {
+            return ApplyTo(ctx, new NumericValue(0));
         }
     }
 }

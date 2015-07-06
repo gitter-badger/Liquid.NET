@@ -10,7 +10,10 @@ namespace Liquid.NET.Filters.Math
     {
         private readonly NumericValue _operand;
 
-        public PlusFilter(NumericValue operand) { _operand = operand; }
+        public PlusFilter(NumericValue operand)
+        {
+            _operand = operand ?? new NumericValue(0);
+        }
 
         public override LiquidExpressionResult ApplyTo(ITemplateContext ctx, NumericValue numericValue)
         {
@@ -22,5 +25,11 @@ namespace Liquid.NET.Filters.Math
 
             return MathHelper.GetReturnValue(val, numericValue, _operand);
         }
+
+        public override LiquidExpressionResult ApplyToNil(ITemplateContext ctx)
+        {
+            return ApplyTo(ctx, new NumericValue(0));
+        }
+
     }
 }

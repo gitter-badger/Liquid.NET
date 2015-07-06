@@ -77,10 +77,10 @@ namespace Liquid.NET.Filters
                 {
                     if (filterList[i].HasValue)
                     {
-                        Console.WriteLine("COMPARING " + filterList[i].Value.GetType() + " TO " + argType);
+                        //Console.WriteLine("COMPARING " + filterList[i].Value.GetType() + " TO " + argType);
                         if (argType == typeof (ExpressionConstant) || argType == typeof (IExpressionConstant)) // most generic type
                         {
-                            Console.WriteLine("Skipping ExpressionConstant...");
+                            //Console.WriteLine("Skipping ExpressionConstant...");
                             result.Add(filterList[i].Value);
                             continue;
                         }
@@ -89,7 +89,7 @@ namespace Liquid.NET.Filters
                         ).WhenError(
                             prm =>
                             {
-                                Console.WriteLine("THIS IS NULL");
+                                //Console.WriteLine("THIS IS NULL");
                                 result.Add(null);// This shouldnt' be hit
                             }
                         );
@@ -97,15 +97,16 @@ namespace Liquid.NET.Filters
                     }
                     else
                     {
-                        // TODO: This is a test
-                        if (argType == typeof (NumericValue))
-                        {
-                            result.Add(new NumericValue(0));
-                        }
-                        else
-                        {
+//                        // TODO: This is a test
+//                        if (filterList[i])
+//                        if (argType == typeof (NumericValue))
+//                        {
+//                            result.Add(new NumericValue(0));
+//                        }
+//                        else
+//                        {
                             result.Add(null);
-                        }
+                        //}
                     }
 
 //                    if (filterList[i].HasValue)

@@ -107,5 +107,6 @@ namespace Liquid.NET.Filters
             get { return typeof(TResult); }
         }
 
+       
     }
 }

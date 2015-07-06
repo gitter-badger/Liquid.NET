@@ -31,6 +31,17 @@ namespace Liquid.NET.Tests.Filters.Strings
             Assert.That(result, Is.EqualTo("Result : 123.jpg"));
         }
 
+        [Test]
+        public void It_Should_Append_Text_To_Nothing()
+        {
+            // Arrange
+            var result = RenderingHelper.RenderTemplate("{%assign x = nil%}Result : {{ x | append : \".jpg\" }}");
+
+            // Assert
+            Assert.That(result, Is.EqualTo("Result : .jpg"));
+        }
+
+
 
     }
 }

@@ -18,8 +18,8 @@ namespace Liquid.NET.Filters.Strings
 
         public PluralizeFilter(StringValue single, StringValue plural)
         {
-            _single = single;
-            _plural = plural;
+            _single = single ?? new StringValue(""); ;
+            _plural = plural ?? new StringValue(""); ;
         }
 
         public override LiquidExpressionResult ApplyTo(ITemplateContext ctx, NumericValue numericValue)

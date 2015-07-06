@@ -16,13 +16,19 @@ namespace Liquid.NET.Filters.Strings
         private readonly StringValue _strToAppend;
 
         public AppendFilter(StringValue strToAppend)
-        {
-            _strToAppend = strToAppend;
+        {            
+            _strToAppend = strToAppend ?? new StringValue("");
         }
 
         public override LiquidExpressionResult ApplyTo(ITemplateContext ctx, IExpressionConstant liquidExpression)
         {
             return LiquidExpressionResult.Success(StringUtils.Eval(liquidExpression, x => x + _strToAppend.StringVal)); 
         }
+
+        public override LiquidExpressionResult ApplyToNil(ITemplateContext ctx)
+        {
+            return ApplyTo(ctx, new StringValue(""));
+        }
+
     }
 }

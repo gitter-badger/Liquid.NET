@@ -12,7 +12,7 @@ namespace Liquid.NET.Filters.Strings
 
         public SplitFilter(StringValue delimiter)
         {
-            _delimiter = delimiter;
+            _delimiter = delimiter ?? new StringValue(""); ;
         }
 
         public override LiquidExpressionResult ApplyTo(ITemplateContext ctx, StringValue liquidStringExpression)

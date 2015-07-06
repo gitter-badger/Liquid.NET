@@ -11,5 +11,10 @@ namespace Liquid.NET.Filters.Math
             var floor = (int) System.Math.Floor(val.DecimalValue);
             return LiquidExpressionResult.Success(new NumericValue(floor));
         }
+
+        public override LiquidExpressionResult ApplyToNil(ITemplateContext ctx)
+        {
+            return ApplyTo(ctx, new NumericValue(0));
+        }
     }
 }

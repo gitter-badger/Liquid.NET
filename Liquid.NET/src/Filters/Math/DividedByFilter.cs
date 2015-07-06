@@ -14,18 +14,18 @@ namespace Liquid.NET.Filters.Math
 
         public DividedByFilter(NumericValue divisor)
         {
-            _divisor = divisor;
+            _divisor = divisor ?? new NumericValue(0);
         }
 
         public override LiquidExpressionResult ApplyTo(ITemplateContext ctx, NumericValue dividend)
         {
             if (dividend == null)
             {
-                return LiquidExpressionResult.Error("The dividend is missing.");
+                dividend = new NumericValue(0);
             }
             if (_divisor == null)
             {
-                return LiquidExpressionResult.Error("The divisor is missing.");
+                return LiquidExpressionResult.Error("Liquid error: divided by 0");
             }
             if (_divisor.DecimalValue == 0.0m)
             {
@@ -35,7 +35,10 @@ namespace Liquid.NET.Filters.Math
             return MathHelper.GetReturnValue(result, dividend, _divisor);
         }
 
-        
+        public override LiquidExpressionResult ApplyToNil(ITemplateContext ctx)
+        {
+            return ApplyTo(ctx, new NumericValue(0));
+        }
     }
 
 }

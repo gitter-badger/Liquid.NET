@@ -17,5 +17,10 @@ namespace Liquid.NET.Filters.Math
             return LiquidExpressionResult.Success(new NumericValue(ceiling));
 
         }
+
+        public override LiquidExpressionResult ApplyToNil(ITemplateContext ctx)
+        {
+            return ApplyTo(ctx, new NumericValue(0));
+        }
     }
 }
