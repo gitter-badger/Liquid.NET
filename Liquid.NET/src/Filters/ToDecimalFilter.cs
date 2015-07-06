@@ -6,12 +6,12 @@ namespace Liquid.NET.Filters
 {
     public class ToDecimalFilter : FilterExpression<ExpressionConstant, NumericValue>
     {
-        public override LiquidExpressionResult Apply(ITemplateContext ctx, ExpressionConstant liquidExpression)
+        public override LiquidExpressionResult ApplyTo(ITemplateContext ctx, IExpressionConstant liquidExpression)
         {
             return LiquidExpressionResult.Success(ConvertToDecimal(liquidExpression));
         }
 
-        public static NumericValue ConvertToDecimal(ExpressionConstant liquidExpression)
+        public static NumericValue ConvertToDecimal(IExpressionConstant liquidExpression)
         {
             
             try

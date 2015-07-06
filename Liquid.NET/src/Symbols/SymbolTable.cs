@@ -31,7 +31,7 @@ namespace Liquid.NET.Symbols
         }
 
         public void DefineFilter<T>(String name)
-            where T: IFilterExpression
+            where T: IFilterExpression //<IExpressionConstant, IExpressionConstant>
         {
             _filterRegistry.Register<T>(name);
         }

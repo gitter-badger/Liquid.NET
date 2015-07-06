@@ -12,7 +12,7 @@ namespace Liquid.NET.Filters.Math
             _operand = operand;
         }
 
-        public override LiquidExpressionResult Apply(ITemplateContext ctx, NumericValue liquidExpression)
+        public override LiquidExpressionResult ApplyTo(ITemplateContext ctx, NumericValue liquidExpression)
         {
             if (_operand == null)
             {

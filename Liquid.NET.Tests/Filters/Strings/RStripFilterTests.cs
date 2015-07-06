@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using NUnit.Framework;
 
 namespace Liquid.NET.Tests.Filters.Strings
@@ -20,5 +17,17 @@ namespace Liquid.NET.Tests.Filters.Strings
             Assert.That(result, Is.EqualTo("Result :    too many spaces"));
 
         }
+
+        [Test]
+        public void It_Should_Strip_Whitespace_When_EMpty()
+        {
+            // Act
+            var result = RenderingHelper.RenderTemplate("{% assign x = nil %}Result : {{ x | rstrip }}");
+
+            // Assert
+            Assert.That(result, Is.EqualTo("Result : "));
+
+        }
+
     }
 }

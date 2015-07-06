@@ -6,16 +6,6 @@ namespace Liquid.NET.Filters.Array
 {
     public class LastFilter : FilterExpression<ExpressionConstant, IExpressionConstant>
     {
-        /// <summary>
-        ///  TODO: Update to new structure
-        /// </summary>
-        /// <returns></returns>
-        public override LiquidExpressionResult Apply(ITemplateContext ctx, ExpressionConstant liquidExpression)
-        {
-            return ApplyTo(ctx, (dynamic)liquidExpression);
-
-
-        }
 
         public override LiquidExpressionResult ApplyTo(ITemplateContext ctx, IExpressionConstant liquidExpression)
         {

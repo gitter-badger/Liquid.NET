@@ -12,3 +12,22 @@
 #
 {% if ' ' == blank %}TRUTHY{% else %}NOT TRUTHY{% endif %}
 #
+{% case nil == empty %}{% when true %}true{% when false %}false{% else %}else{% endcase %}
+#
+{% case nil.empty? %}{% when true %}true{% when false %}false{% else %}else{% endcase %}
+#
+{% if nil.empty? %}TRUTHY{% else %}NOT TRUTHY{% endif %}
+#
+{% case nil %}{% when 0 %}zero{% when empty %}empty{% when nil %}nil{% else %}else{% endcase %}
+#
+{% case nil %}{% when 0 %}zero{%else%}not zero{% endcase %}
+#
+{% case nil %}{% when false %}FALSE{% when true %}TRUE{%else%}NOT TRUE OR FALSE{% endcase %}
+#
+{% case 0 %}{% when 0 %}zero{%else%}not zero{% endcase %}
+#
+{% case 0 %}{% when true %}TRUE{% when false %}FALSE{%else%}NOT TRUE OR FALSE{% endcase %}
+#
+{% assign x=nil %}{% if x %}TRUTHY{% else %}NOT TRUTHY{% endif %}
+#
+{% assign x="abc" %}{% if x %}TRUTHY{% else %}NOT TRUTHY{% endif %}

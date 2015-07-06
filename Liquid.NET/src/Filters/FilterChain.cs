@@ -1,10 +1,7 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using Liquid.NET.Constants;
-using Liquid.NET.Expressions;
 using Liquid.NET.Utils;
 
 namespace Liquid.NET.Filters
@@ -30,20 +27,25 @@ namespace Liquid.NET.Filters
 
             // create the casting filter which will cast the incoming object to the input type of filter #1
             
-            Func<IExpressionConstant, LiquidExpressionResult> castFn = 
-                objExpr => objExpr!=null? CreateCastFilter(objExpr.GetType(), expressions[0].SourceType).Apply(ctx, objExpr) : LiquidExpressionResult.Success(new None<IExpressionConstant>());
+            Func<Option<IExpressionConstant>, LiquidExpressionResult> castFn = 
+                objExpr => objExpr.HasValue? 
+                    CreateCastFilter(objExpr.GetType().GenericTypeArguments[0], expressions[0].SourceType)
+                    .Apply(ctx, objExpr) : LiquidExpressionResult.Success(new None<IExpressionConstant>());
             //Func<Option<IExpressionConstant>, LiquidExpressionResult> castFn = 
                 //objExpr => CreateCastFilter(objExpr.GetType(), expressions[0].SourceType).Apply(objExpr);
 
             // put the casting filter in between the object and the chain
 //            return objExpression => objExpression.Bind(x => castFn(objExpression))
 //                                                 .Bind(CreateChain(expressions));      
-            // TODO: Figure out how to do this.  It should call ApplyNil() or something.
-            return optionExpression => (castFn(optionExpression.HasValue ? optionExpression.Value : null)).Bind(CreateChain(ctx, expressions));
             //return optionExpression => optionExpression.HasValue ? castFn(optionExpression.Value) : LiquidExpressionResult.Success(new None<IExpressionConstant>()).Bind(CreateChain(expressions));
 
             //return objExpression => objExpression.Bind(x => castFn(objExpression))
             //    .Bind(CreateChain(expressions));    
+
+            // TODO: Figure out how to do this.  It should call ApplyNil() or something.
+            //return optionExpression => (castFn(optionExpression.HasValue ? optionExpression.Value : null)).Bind(CreateChain(ctx, expressions));
+            return optionExpression => (castFn(optionExpression)).Bind(CreateChain(ctx, expressions));
+
 
         }
 
@@ -76,8 +78,8 @@ namespace Liquid.NET.Filters
                 LiquidExpressionResult result;
                 if (current.SuccessResult.HasValue)
                 {
-
-                    result = filter.Apply(ctx, current.SuccessResult.Value);
+                    result = filter.Apply(ctx, (dynamic) current.SuccessResult);
+                    //result = filter.Apply(ctx, current.SuccessResult);
                 }
                 else
                 {
@@ -157,6 +159,8 @@ namespace Liquid.NET.Filters
             //where sourceType: IExpressionConstant
         {
             // TODO: Move this to FilterFactory.Instantiate
+
+            //var wrappedResultType = resultType.GenericTypeArguments[0];
             Type genericClass = typeof(CastFilter<,>);
             // MakeGenericType is badly named
             //Console.WriteLine("FilterChain Creating Converter from " + sourceType + " to " + resultType);

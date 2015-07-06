@@ -28,9 +28,18 @@ namespace Liquid.NET.Tests.Ruby
         [TestCase(@"{% if myarray %}TRUTHY{% else %}NOT TRUTHY{% endif %}", @"", @"NOT TRUTHY")]
         [TestCase(@"{% if myundefined == empty %}TRUTHY{% else %}NOT TRUTHY{% endif %}", @"", @"NOT TRUTHY")]
         [TestCase(@"{% if myundefined == blank %}TRUTHY{% else %}NOT TRUTHY{% endif %}", @"", @"NOT TRUTHY")]
-        //[TestCase(@"{% if nil == empty %}TRUTHY{% else %}NOT TRUTHY{% endif %}", @"", @"NOT TRUTHY")]
+        [TestCase(@"{% if nil == empty %}TRUTHY{% else %}NOT TRUTHY{% endif %}", @"", @"NOT TRUTHY")]
         [TestCase(@"{% if ' ' == blank %}TRUTHY{% else %}NOT TRUTHY{% endif %}", @"", @"NOT TRUTHY")]
-        [TestCase(@"{% if ' ' == empty %}TRUTHY{% else %}NOT TRUTHY{% endif %}", @"", @"NOT TRUTHY")]
+        [TestCase(@"{% case nil == empty %}{% when true %}true{% when false %}false{% else %}else{% endcase %}", @"", @"else")]
+        [TestCase(@"{% case nil.empty? %}{% when true %}true{% when false %}false{% else %}else{% endcase %}", @"", @"else")]
+        [TestCase(@"{% if nil.empty? %}TRUTHY{% else %}NOT TRUTHY{% endif %}", @"", @"NOT TRUTHY")]
+        [TestCase(@"{% case nil %}{% when 0 %}zero{% when empty %}empty{% when nil %}nil{% else %}else{% endcase %}", @"", @"nil")]
+        [TestCase(@"{% case nil %}{% when 0 %}zero{%else%}not zero{% endcase %}", @"", @"not zero")]
+        [TestCase(@"{% case nil %}{% when false %}FALSE{% when true %}TRUE{%else%}NOT TRUE OR FALSE{% endcase %}", @"", @"NOT TRUE OR FALSE")]
+        [TestCase(@"{% case 0 %}{% when 0 %}zero{%else%}not zero{% endcase %}", @"", @"zero")]
+        [TestCase(@"{% case 0 %}{% when true %}TRUE{% when false %}FALSE{%else%}NOT TRUE OR FALSE{% endcase %}", @"", @"NOT TRUE OR FALSE")]
+        [TestCase(@"{% assign x=nil %}{% if x %}TRUTHY{% else %}NOT TRUTHY{% endif %}", @"", @"NOT TRUTHY")]
+        [TestCase(@"{% assign x=""abc"" %}{% if x %}TRUTHY{% else %}NOT TRUTHY{% endif %}", @"", @"TRUTHY")]
         public void It_Should_Match_Ruby_Output(String input, String assigns, String expected) {
 
             // Arrange

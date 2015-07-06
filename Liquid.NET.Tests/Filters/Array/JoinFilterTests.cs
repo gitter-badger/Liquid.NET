@@ -45,20 +45,5 @@ namespace Liquid.NET.Tests.Filters.Array
 
         }
 
-        [Test]
-        [Ignore]
-        public void It_Should_Test_Empty_Conditions()
-        {
-            // TODO
-        }
-
-        [Test]
-        [Ignore]
-        public void It_Should_Test_Variables()
-        {
-            // TODO
-        }
-
-
     }
 }

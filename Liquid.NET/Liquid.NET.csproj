@@ -66,7 +66,6 @@
     <Compile Include="src\Constants\ArrayIndexer.cs" />
     <Compile Include="src\Constants\ArrayValue.cs" />
     <Compile Include="src\Constants\BooleanValue.cs" />
-    <Compile Include="src\Constants\ConstantFactory.cs" />
     <Compile Include="src\Constants\DateValue.cs" />
     <Compile Include="src\Constants\DictionaryValue.cs" />
     <Compile Include="src\Constants\EasyOptionComparer.cs" />

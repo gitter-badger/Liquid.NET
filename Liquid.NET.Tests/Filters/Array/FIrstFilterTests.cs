@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Liquid.NET.Constants;
 using Liquid.NET.Filters.Array;
 using NUnit.Framework;
@@ -28,7 +25,7 @@ namespace Liquid.NET.Tests.Filters.Array
             var filter = new FirstFilter();
 
             // Act
-            var result = filter.Apply(new TemplateContext(), arrayValue).SuccessValue<StringValue>();
+            var result = filter.ApplyTo(new TemplateContext(), arrayValue).SuccessValue<StringValue>();
 
             // Assert
             Assert.That(result, Is.EqualTo(objlist[0]));
