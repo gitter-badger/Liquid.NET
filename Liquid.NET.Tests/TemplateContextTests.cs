@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Collections.Generic;
+using System.Numerics;
 using Liquid.NET.Constants;
 using NUnit.Framework;
 
@@ -38,6 +39,22 @@ namespace Liquid.NET.Tests
 
             // Assert
             Assert.That(val, Is.EqualTo(orig));
+        }
+
+        [Test]
+        public void It_Should_Define_Many_Variables()
+        {
+            // Arrange
+            const string varname = "hello";
+            var testValue = "Test Value";
+            var templateContext = new TemplateContext().WithLocalVariables(new Dictionary<string, IExpressionConstant>{{varname, new StringValue(testValue)}});
+
+            // Act
+            var result = templateContext.SymbolTableStack.Reference(varname);
+
+            // Assert
+            Assert.That(result.SuccessValue<StringValue>().StringVal, Is.EqualTo(testValue));
+
         }
 
 

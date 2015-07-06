@@ -36,5 +36,8 @@
 {{ null | modulo: 2 }}
 #
 {{ null | append: "test" }}
+#
+{{ "Hello" | plus: " there" }}
+
 
 

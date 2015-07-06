@@ -49,7 +49,22 @@ namespace Liquid.NET.Tests.Filters
 
         }
 
-       
+        [Test]
+        [TestCase(1.3, 1)]
+        [TestCase(1.5, 2)]
+        public void It_Should_Cast_A_Decimal_To_An_Int(decimal val, int expected)
+        {
+            // Arrange
+            var toIntFilter = new ToIntFilter();
+
+            // Act
+            var result = toIntFilter.Apply(new TemplateContext(), new NumericValue(val)).SuccessValue<NumericValue>();
+
+            // Assert
+            Assert.That(result.DecimalValue, Is.EqualTo((decimal)expected));
+            Assert.That(result.IntValue, Is.EqualTo(expected));
+
+        }
 
     }
 }
