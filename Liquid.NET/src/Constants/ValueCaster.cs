@@ -193,7 +193,7 @@ namespace Liquid.NET.Constants
 //            if (typeof(NumericValue).IsAssignableFrom(origType) || typeof(BooleanValue).IsAssignableFrom(origType) ||
 //                if (typeof(ArrayValue).IsAssignableFrom(origType) || typeof(DictionaryValue).IsAssignableFrom(origType))
 //            {
-            if (typeof(StringValue).IsAssignableFrom(origType)) 
+            if (typeof(StringValue).IsAssignableFrom(origType) || typeof(DateValue).IsAssignableFrom(origType)) 
             {
                 return "\"" + str + "\"";
             }

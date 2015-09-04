@@ -745,8 +745,8 @@ namespace Liquid.NET
         {
             base.EnterCustom_tag(customContext);
 
-            //Console.WriteLine("I see CUSTOM TAG " + customContext.tagname().GetText());
-            var customTag = new CustomTag(customContext.tagname().GetText());
+            Console.WriteLine("I see CUSTOM TAG " + customContext.VARIABLENAME().GetText());
+            var customTag = new CustomTag(customContext.VARIABLENAME().GetText());
             AddNodeToAST(customTag);
 
             CurrentBuilderContext.CustomTagStack.Push(customTag);
@@ -767,7 +767,7 @@ namespace Liquid.NET
 //            {
 //                Console.WriteLine("There is an exception!!" + customBlockContext.exception.Message);
 //            }
-//            Console.WriteLine("I see CUSTOM BLOCK TAG " + customBlockContext);
+            Console.WriteLine("I see CUSTOM BLOCK TAG " + customBlockContext.GetText());
             var customTag = new CustomBlockTag(customBlockContext.custom_block_start_tag().GetText());
             //var customTag = new CustomBlockTag(customBlockContext.LABEL().GetText());
             AddNodeToAST(customTag);

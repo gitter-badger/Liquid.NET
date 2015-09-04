@@ -154,7 +154,7 @@ namespace Liquid.NET
             var tagRenderer = CustomBlockTagRendererFactory.Create(tagType);
             if (tagRenderer == null)
             {
-                AddError("Liquid syntax error: Unknown tag '" + customBlockTag.TagName + "'", customBlockTag);              
+                AddError("Liquid syntax error: Unknown block tag '" + customBlockTag.TagName + "'", customBlockTag);              
                 return;
             }
 

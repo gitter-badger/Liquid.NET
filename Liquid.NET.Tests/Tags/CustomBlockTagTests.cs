@@ -64,12 +64,16 @@ namespace Liquid.NET.Tests.Tags
             // Act
             var templateContext = new TemplateContext()
                 .WithAllFilters()
-                .WithCustomTagBlockRenderer<WordReverserBlockTag>("echoargs")
-                .WithCustomTagRenderer<CustomTagTests.EchoArgsTagRenderer>("echoargs2");
-            var result = RenderingHelper.RenderTemplate("Result : {% echoargs2 \"Test\" %}{% echoargs \"hello\" 123 true %}{% if true %}IT IS TRUE{% endif %}{% endechoargs %}", templateContext);
+                .WithCustomTagBlockRenderer<WordReverserBlockTag>("reverseblock")
+                .WithCustomTagRenderer<CustomTagTests.EchoArgsTagRenderer>("echotag");
 
+            String result = null;
+           
+                result = RenderingHelper.RenderTemplate(
+                    "Result : {% echotag \"Test\" %}{% reverseblock \"hello\" 123 true %}{% if true %}IT IS TRUE{% endif %}{% endreverseblock %}",
+                    templateContext);
             // Assert
-            Assert.That(result, Is.EqualTo("Result : TI SI EURT"));
+            Assert.That(result, Is.EqualTo("Result : TestTI SI EURT"));
 
         }
 

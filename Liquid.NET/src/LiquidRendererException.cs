@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Liquid.NET
 {
@@ -16,5 +17,6 @@ namespace Liquid.NET
             get { return _liquidErrors; }
         }
 
+        public override string Message { get { return String.Join("; ", _liquidErrors.Select(x => x.Message)); } }
     }
 }

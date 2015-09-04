@@ -55,16 +55,18 @@ raw_tag:			RAW;
 //custom_blocktag:	TAGSTART custom_block_start_tag customtagblock_expr* TAGEND custom_blocktag_block TAGSTART custom_block_end_tag { _localctx.custom_block_end_tag().GetText().Equals("end" + _localctx.custom_block_start_tag().GetText()) }?  TAGEND ;
 custom_blocktag:	TAGSTART custom_block_start_tag customtagblock_expr* TAGEND custom_blocktag_block TAGSTART custom_block_end_tag TAGEND { _localctx.custom_block_end_tag().GetText().Equals("end" + _localctx.custom_block_start_tag().GetText()) }?;
 //custom_blocktag:	TAGSTART custom_block_start_tag customtagblock_expr* TAGEND custom_blocktag_block TAGSTART custom_block_end_tag TAGEND;
+//custom_blocktag:	TAGSTART custom_block_start_tag customtagblock_expr* TAGEND custom_blocktag_block TAGSTART custom_block_end_tag TAGEND;
 //					| TAGSTART custom_block_start_tag customtagblock_expr* TAGEND custom_blocktag_block TAGSTART LABEL TAGEND {NotifyErrorListeners("Liquid error: end tag does not match start tag '" + _localctx.custom_block_start_tag().GetText() + "'");} ;
 
 custom_block_start_tag:		VARIABLENAME;
-custom_block_end_tag:		ENDLABEL;
+custom_block_end_tag:		{IsMatch(CurrentToken)}? ENDLABEL;
+//custom_block_end_tag:		ENDLABEL;
 
 customtagblock_expr:		outputexpression;
 
 custom_blocktag_block: block* ;
 
-custom_tag:			TAGSTART tagname customtag_expr* TAGEND ;	
+custom_tag:			TAGSTART VARIABLENAME customtag_expr* TAGEND ;	
 
 customtag_expr:		outputexpression;
 
@@ -233,7 +235,6 @@ expr:				PARENOPEN expr PARENCLOSE			# GroupedExpr
 					| expr OR expr                      # OrExpr
 					;	
 
-tagname:			VARIABLENAME ; 
 
 
 
