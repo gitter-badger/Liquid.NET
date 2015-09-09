@@ -25,7 +25,41 @@ namespace Liquid.NET.Constants
             }
 
             return Convert<TDest>((dynamic)src);
+            
+//            var str = src as StringValue;
+//            if (str != null)
+//            {
+//                return Convert<TDest>(str);
+//            }
+//            var num = src as NumericValue;
+//            if (num != null)
+//            {
+//                return Convert<TDest>(num);
+//            }
+//            var boo = src as BooleanValue;
+//            if (boo != null)
+//            {
+//                return Convert<TDest>(boo);
+//            }
+//            var dateval = src as DateValue;
+//            if (dateval != null)
+//            {
+//                return Convert<TDest>(dateval);
+//            }
+//            var arr = src as ArrayValue;
+//            if (arr != null)
+//            {
+//                return Convert<TDest>(arr);
+//            }
+//            var dict = src as DictionaryValue;
+//            if (dict != null)
+//            {
+//                return Convert<TDest>(dict);
+//            }
+//            return Convert<TDest>(src);
+            
         }
+
 
         /// <summary>
         /// This applies the liquid casting rules, e.g. "null is zero when NumericValue" or 
@@ -349,6 +383,8 @@ namespace Liquid.NET.Constants
             {
                 return "";
             }
+
+            //return val.ToString();
 
             var stringResult = Cast<IExpressionConstant, StringValue>(val);
 
