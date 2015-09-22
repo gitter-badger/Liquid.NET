@@ -27,8 +27,6 @@ namespace Liquid.NET
 
     public class LiquidASTGenerator : LiquidBaseListener, ILiquidASTGenerator
     {
-        // TODO: WHen done it shoudl check if all the stacks are reset.
-
         public event OnParsingErrorEventHandler ParsingErrorEventHandler;
 
         private BufferedTokenStream _tokenStream;
@@ -115,11 +113,6 @@ namespace Liquid.NET
             CurrentAstNode.AddChild(newNode);
         }
 
-        /// <summary>
-        /// Todo: see if this can be lexed out.
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
         public String TrimRawTags(String str)
         {
             var str1 = Regex.Replace(str, "^{%\\s*raw\\s%}", "", RegexOptions.IgnoreCase);
@@ -490,22 +483,7 @@ namespace Liquid.NET
                 StartCapturingVariable(
                     context.variable(),
                     x => setCurrentExpression(new TreeNode<LiquidExpression>(new LiquidExpression { Expression = x })));
-
-//                StartNewLiquidExpressionTree(x =>
-//                {
-//                    //Console.WriteLine("==== Assiging index Index " + context.variable().GetText() + " to " + x);
-//                    setCurrentExpression(x);
-//                });
-//                StartCapturingVariable(context.variable());
-//                //MB MarkCurrentExpressionComplete();
             }
-
-        }
-
-        public override void ExitGenerator_index(LiquidParser.Generator_indexContext context)
-        {
-            base.ExitGenerator_index(context); 
-            //Console.WriteLine("___ EXIT Generator Index " + context.GetText());
 
         }
 
@@ -790,25 +768,18 @@ namespace Liquid.NET
             // then place all the liquid blocks that were siblings in between the start tag and here
             // into the new CustomBlockTag
 
-           // Console.WriteLine("NEED TO Restructure TREE HERE");
-            //Console.WriteLine("-- END OF CLOSING CUSTOM TAG: " + context.ENDLABEL());
             while(true)
             {
-                //if (CurrentBuilderContext.CustomTagStack.Count > 0)
                 if (_customTagStackAndParent.Count > 0)
                 {
-                    //var maybeOpeningTag = CurrentBuilderContext.CustomTagStack.Pop();
                     var maybeOpeningTagTuple = _customTagStackAndParent.Pop();
                     var customTagOpen = maybeOpeningTagTuple.Item1;
                     var astForCustomOpeningTag = maybeOpeningTagTuple.Item2;
-                    //Console.WriteLine("CHECKING TAG " + customTagOpen.TagName);
                     if (("end" + customTagOpen.TagName).ToLower().Equals(context.ENDLABEL().GetText().ToLower()))
                     {
                         //Console.WriteLine("FOUND OPENING TAG " + customTagOpen.TagName);
-                        //Console.WriteLine("TODO: promote all sibling blocks between the start and end so they become the child of " + customTagOpen.TagName);
                         //Console.WriteLine("PARENT IS " + astForCustomOpeningTag);
-                        //bool inSibling = false;
-                        //var childrenToRemoveFromParent()
+
                         // find the content block and all its siblings up to here.
                         var childrenToReplace = astForCustomOpeningTag.Parent.Children
                             .SkipWhile(child => child.Data != customTagOpen)
@@ -1625,43 +1596,10 @@ namespace Liquid.NET
         public override void EnterVariableFilterArg(LiquidParser.VariableFilterArgContext context)
         {
             base.EnterVariableFilterArg(context);
-            //Console.WriteLine("Enter VARIABLE FILTERARG >" + context.GetText() + "<");
-
-            //LiquidExpression expr = new LiquidExpression();  // create the holding expression
-            //CurrentBuilderContext.LiquidExpressionBuilder.AddFilterArgToLastExpressionsFilter(
-                //new TreeNode<LiquidExpression>(expr)); // add the (currently empty) expression to the list of vals
-            //var obj1 = obj; // avoid weird closure issue
             StartCapturingVariable(
                 context.variable(),
                     x => CurrentBuilderContext.LiquidExpressionBuilder.AddFilterArgToLastExpressionsFilter(
                       new TreeNode<LiquidExpression>(new LiquidExpression { Expression = x })));
-                //x => forBlock.Limit = new TreeNode<LiquidExpression>(new LiquidExpression { Expression = x }));
-
-
-//            varsToCapture.Push(() => // push onto a stack, later to be eval-ed in reverse order.
-//                StartCapturingVariable(
-//                    obj1.variable(),
-//                    x => expr.Expression = x));
-
-//            VariableReferenceTreeBuilder variableReferenceTreeBuilder = new VariableReferenceTreeBuilder();
-//            CurrentBuilderContext.VarReferenceTreeBuilder.Push(variableReferenceTreeBuilder);
-//            variableReferenceTreeBuilder.VariableReferenceTreeCompleteEvent +=
-//                x =>
-//                {
-//                    Console.WriteLine(">>> VariableReferenceTree Complete");
-//                    CurrentBuilderContext.LiquidExpressionBuilder.AddFilterArgToLastExpressionsFilter(
-//                           CreateObjectSimpleExpressionNode(x));
-//                    //AddExpressionToCurrentExpressionBuilder(x);
-//                    //MarkCurrentExpressionComplete();
-//                };
-        }
-
-        public override void ExitVariableFilterArg(LiquidParser.VariableFilterArgContext context)
-        {
-//            base.ExitVariableFilterArg(context);
-//            //CurrentBuilderContext.VarReferenceTreeBuilder.Peek().NotifyListenersOfConstructedVariable();
-//            CurrentBuilderContext.VarReferenceTreeBuilder.Peek().EndVariable();
-//            CurrentBuilderContext.VarReferenceTreeBuilder.Pop();
         }
 
         /// <summary>
@@ -1683,11 +1621,6 @@ namespace Liquid.NET
 
         #endregion
 
-        public override void EnterFilter(LiquidParser.FilterContext context)
-        {
-            base.EnterFilter(context);
-            //Console.WriteLine("...Entering Filter");
-        }
 
         #region Variables
 
@@ -1704,6 +1637,9 @@ namespace Liquid.NET
             //Console.WriteLine(" ===> StartCapturingVariable: LISTENING FOR VARIABLE CREATION "+variableContext.GetText());
 
             var variableReferenceTreeBuilder = new VariableReferenceTreeBuilder();
+
+            //Console.WriteLine("++ B PUSH VARIABLEREFERENCETREEBUILDER");
+
             CurrentBuilderContext.VarReferenceTreeBuilder.Push(variableReferenceTreeBuilder);
             variableReferenceTreeBuilder.VariableReferenceTreeCompleteEvent +=
                 x =>
@@ -1716,7 +1652,18 @@ namespace Liquid.NET
                        // Console.WriteLine("OoO Calling OnCOmplete");
                         onComplete(x);
                     }
-                    CurrentBuilderContext.VarReferenceTreeBuilder.Pop();
+                    
+                    //if (CurrentBuilderContext.VarReferenceTreeBuilder.Count() > 1)
+                    //{
+                        //Console.WriteLine("-- B POP VARIABLEREFERENCETREEBUILDER");
+                        CurrentBuilderContext.VarReferenceTreeBuilder.Pop();
+                        //Console.WriteLine("THERE ARE NOW " + CurrentBuilderContext.VarReferenceTreeBuilder.Count() + " TREES");
+                    //}
+                    //else
+                    //{
+                        //Console.WriteLine("Leave on stack!");
+                        //leave one on the stack---maybe we're not done
+                    //}
                 };
         }
 
@@ -1736,11 +1683,13 @@ namespace Liquid.NET
             //Console.WriteLine("<><> ENTER VariableObject " + context.GetText());
 
             var variableReferenceTreeBuilder = new VariableReferenceTreeBuilder();
+            //Console.WriteLine("++ A PUSH VARIABLEREFERENCETREEBUILDER");
             CurrentBuilderContext.VarReferenceTreeBuilder.Push(variableReferenceTreeBuilder);
             StartCapturingVariable(
                 context.variable(),
                 x =>
                 {
+                    //Console.WriteLine("Does there need to be a pop here?");
                     AddExpressionToCurrentExpressionBuilder(x);
                     MarkCurrentExpressionComplete();
                 });
@@ -1761,7 +1710,7 @@ namespace Liquid.NET
         {
             //Console.WriteLine("<><> EXIT VariableObject  " + context.GetText());
 //            base.ExitVariableObject(context);
-
+            //Console.WriteLine("-- A POP VARIABLEREFERENCETREEBUILDER");
             CurrentBuilderContext.VarReferenceTreeBuilder.Pop();
 
             // OK CurrentBuilderContext.VarReferenceTreeBuilder.Pop();
@@ -1785,10 +1734,12 @@ namespace Liquid.NET
 
         public override void ExitVariable(LiquidParser.VariableContext variableContext)
         {
-            base.ExitVariable(variableContext);
             var varname = variableContext.VARIABLENAME().GetText();
-            CurrentBuilderContext.VarReferenceTreeBuilder.Peek().EndVariable();
             //Console.WriteLine("=== EXIT variable " + varname + " ===");
+            base.ExitVariable(variableContext);
+            
+            CurrentBuilderContext.VarReferenceTreeBuilder.Peek().EndVariable();
+            
         }
 
 
@@ -1981,26 +1932,37 @@ namespace Liquid.NET
 
         public class VariableReferenceTreeBuilder
         {
+            static int counter = 0;
+            private readonly int _id;
             private VariableReferenceTree _root;
             private VariableReferenceTree _current;
 
             public event OnVariableReferenceTreeCompleteEventHandler VariableReferenceTreeCompleteEvent;
 
+            public VariableReferenceTreeBuilder()
+            {
+                _id = counter++;
+                //Console.WriteLine("NEW REFERNENCE BUILDER "+ _id);
+            }
 
             public void StartVariable()
             {
-                //Console.WriteLine("# VariableReferenceTreeBuilder.StartVariable()");
+                //Console.WriteLine("# "+_id+") VariableReferenceTreeBuilder.StartVariable()");
 
                 if (_root == null)
                 {
+                    //Console.WriteLine(" Create new root, current");
                     _current = new VariableReferenceTree();
                     _root = _current;
                 }
+                //Console.WriteLine("   Start Variable : Root is " + (_root == null ? "NULL" : (">" + _root)));
+                //Console.WriteLine("   Start Variable : Current is " + (_current == null ? "NULL" : (">" + _current)));
             }
 
             public void EndVariable()
             {
                 //Console.WriteLine("# VariableReferenceTreeBuilder.EndVariable()");
+                // zzz: I think this is called from the wrong place
                 InvokeVariableReferenceTreeCompleteEvent(Result);
             }
 
@@ -2010,10 +1972,21 @@ namespace Liquid.NET
             /// </summary>
             public void StartIndex()
             {
-                //Console.WriteLine("# VariableReferenceTreeBuilder.StartIndex()");
-                
+                //Console.WriteLine("## " + _id + ") VariableReferenceTreeBuilder.StartIndex()");
+                //Console.WriteLine(" 1) ROOT IS " + (_root == null ? "NULL" : (">" + _root)));
+                //Console.WriteLine(" 1) CURRENT IS " + (_current == null ? "NULL" : (">" + _current)));
+
+                if (_current == null)
+                {
+
+                    //Console.WriteLine("Problem: THere is no variable to go with this ");
+                    //_current = new VariableReferenceTree();
+                    //_root = _current;
+                }
+
                 if (_current.IndexExpression != null)
                 {
+                    //Console.WriteLine(" INSERT ");
                     // insert the new value-index pair above the current node, because
                     // it's on the same level, e.g. a[b][c] <-- inserting c
                     var newParentNode = new VariableReferenceTree();
@@ -2024,16 +1997,19 @@ namespace Liquid.NET
 
                 _current.IndexExpression = newNode;
                 _current = newNode;
+                //Console.WriteLine(" 2) CURRENT IS " + _current);
             }
 
             private void InsertNewNodeAboveCurrent(VariableReferenceTree newNode)
             {
+
+                //Console.WriteLine(" - " + _id + ") VariableReferenceTreeBuilder.InsertNewNodeAboveCurrent()");
                 newNode.Value = _current; // current node is now child of newnode
 
                 if (_current.Parent == null) 
-                {                    
-                    //Console.WriteLine("NEW ROOT");
+                {                                        
                     _root = newNode; // this is the new toplevel node
+                    //Console.WriteLine("NEW ROOT = " + _root);
                 }
                 else
                 {
@@ -2043,17 +2019,20 @@ namespace Liquid.NET
                 }
 
                 newNode.Parent = _current.Parent;
+                //Console.WriteLine(" newNode.Parent is now " + newNode.Parent);
                 _current.Parent = newNode;
+                //Console.WriteLine(" _current.Parent is now " + _current.Parent);
                 _current = newNode;
+                //Console.WriteLine("Current is now " + _current);
                 //EndIndex();
             }
 
             public void EndIndex()
             {
-                //Console.WriteLine("# VariableReferenceTreeBuilder.EndIndex()");
+                //Console.WriteLine("## " + _id + ") VariableReferenceTreeBuilder.EndIndex()");
                 if (_current == null)
                 {
-                    //Console.WriteLine("Current is null");
+                   // Console.WriteLine("   In EndIndex, Current is null!");
                 }
                 else
                 {
@@ -2063,19 +2042,19 @@ namespace Liquid.NET
 
             public void AddVarName(String varname)
             {
-                //Console.WriteLine("# VariableReferenceTreeBuilder.AddVarName("+varname+")");
+                //Console.WriteLine("- " + _id + ") VariableReferenceTreeBuilder.AddVarName(" + varname + ")");
                 _current.Value = new VariableReference(varname);
             }
 
             public void AddIntIndex(int index)
             {
-                //Console.WriteLine("# VariableReferenceTreeBuilder.AddIntIndex(" + index+ ")");
+                //Console.WriteLine("- " + _id + ") VariableReferenceTreeBuilder.AddIntIndex(" + index + ")");
                 _current.Value = NumericValue.Create(index);
             }
 
             public void AddStringIndex(String index)
             {
-                //Console.WriteLine("# VariableReferenceTreeBuilder.AddStringIndex(" + index + ")");
+                //Console.WriteLine("- " + _id + ") VariableReferenceTreeBuilder.AddStringIndex(" + index + ")");
                 _current.Value = new StringValue(index);
 
             }
@@ -2088,6 +2067,7 @@ namespace Liquid.NET
 
             private void InvokeVariableReferenceTreeCompleteEvent(VariableReferenceTree variableReferenceTree)
             {
+                //Console.WriteLine("**** THE TREE IS COMPLETE");
                 OnVariableReferenceTreeCompleteEventHandler handler = VariableReferenceTreeCompleteEvent;
                 if (handler != null)
                 {
