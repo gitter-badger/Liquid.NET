@@ -1487,6 +1487,64 @@ namespace Liquid.NET
 
         #region Output / Filter
 
+        public override void EnterObject(LiquidParser.ObjectContext context)
+        {
+            Console.WriteLine(Indent() + "> ENTER object" + context.GetText());
+            base.EnterObject(context);
+            var variableReferenceTreeBuilder = new VariableReferenceTreeBuilder();
+
+            CurrentBuilderContext.VarReferenceTreeBuilder.Push(variableReferenceTreeBuilder);
+            if (context.variable() != null)
+            {
+                StartCapturingVariable(
+               context.variable(),
+               x =>
+               {
+                   AddExpressionToCurrentExpressionBuilder(x);
+                   //MarkCurrentExpressionComplete();
+                   //CurrentBuilderContext.VarReferenceTreeBuilder.Peek().InvokeComplete(); // I think this is sort of redundant
+               });
+
+            }
+            if (context.STRING() != null)
+            {
+                AddExpressionToCurrentExpressionBuilder(GenerateStringSymbol(context.GetText()));
+            }
+            if (context.NULL() != null)
+            {
+                AddExpressionToCurrentExpressionBuilder(null);
+            }
+            if (context.NULL() != null)
+            {
+                AddExpressionToCurrentExpressionBuilder(null);
+            }
+            if (context.NUMBER() != null)
+            {
+                var liquidExpressionResult = NumericValue.Parse(context.GetText());
+                if (liquidExpressionResult.IsError)
+                {
+                    throw new Exception("Unable to parse " + context.GetText());
+                        // this should never occur---the parser only passes valid numeric values.
+                }
+                AddExpressionToCurrentExpressionBuilder(liquidExpressionResult.SuccessValue<NumericValue>());
+            }
+        }
+
+        public override void ExitObject(LiquidParser.ObjectContext context)
+        {
+            Console.WriteLine(Indent() + "< EXIT object" + context.GetText());
+            base.ExitObject(context);
+            //if (context.variable() != null)
+            //{
+                CurrentBuilderContext.VarReferenceTreeBuilder.Pop();
+            //}
+           // else
+            //{
+                MarkCurrentExpressionComplete();
+            //}
+        }
+
+        /*
         public override void EnterStringObject(LiquidParser.StringObjectContext context)
         {
             base.EnterStringObject(context);
@@ -1516,28 +1574,45 @@ namespace Liquid.NET
             MarkCurrentExpressionComplete();
         }
 
-        /// <summary>
-        /// TODO: Strip the quotes in the parser/lexer.  Until then, we'll do it here.
-        /// </summary>
-        private StringValue GenerateStringSymbol(String text)
+
+        public override void EnterVariableObject(LiquidParser.VariableObjectContext context)
         {
-            return new StringValue(StripQuotes(text));
-            //return new StringValue(text);
+            base.EnterVariableObject(context);
+            Console.WriteLine(Indent() + "> ENTER VariableObject " + context.GetText());
+
+            var variableReferenceTreeBuilder = new VariableReferenceTreeBuilder();
+
+            CurrentBuilderContext.VarReferenceTreeBuilder.Push(variableReferenceTreeBuilder);
+            StartCapturingVariable(
+                context.variable(),
+                x =>
+                {
+                    AddExpressionToCurrentExpressionBuilder(x);
+                    MarkCurrentExpressionComplete();
+                    //CurrentBuilderContext.VarReferenceTreeBuilder.Peek().InvokeComplete(); // I think this is sort of redundant
+                });
+
+            // OK
+            //            var variableReferenceTreeBuilder = new VariableReferenceTreeBuilder();
+            //            CurrentBuilderContext.VarReferenceTreeBuilder.Push(variableReferenceTreeBuilder);
+            //            variableReferenceTreeBuilder.VariableReferenceTreeCompleteEvent +=
+            //                x =>
+            //                {
+            //                    AddExpressionToCurrentExpressionBuilder(x);
+            //                    MarkCurrentExpressionComplete();
+            //                };
+            // END OK
         }
 
-        private static string StripQuotes(String str)
+        public override void ExitVariableObject(LiquidParser.VariableObjectContext context)
         {
-            return str.Substring(1, str.Length - 2);
+            Console.WriteLine(Indent() + "< EXIT VariableObject " + context.GetText());
+            base.ExitVariableObject(context);
+            //CurrentBuilderContext.VarReferenceTreeBuilder.Peek().InvokeComplete();
+            CurrentBuilderContext.VarReferenceTreeBuilder.Pop();
+
         }
-
-
-
-
-        private static NumericValue CreateIntNumericValueFromString(string intstring)
-        {
-            return NumericValue.Create(Convert.ToInt32(intstring));
-        }
-
+        
         public override void EnterNumberObject(LiquidParser.NumberObjectContext context)
         {
             //Console.WriteLine("CREATING NUMBER OBJECT  >" + context.GetText() + "<");
@@ -1571,6 +1646,29 @@ namespace Liquid.NET
             base.ExitBooleanObject(context);
             MarkCurrentExpressionComplete();
         }
+        */
+
+
+        /// <summary>
+        /// TODO: Strip the quotes in the parser/lexer.  Until then, we'll do it here.
+        /// </summary>
+        private StringValue GenerateStringSymbol(String text)
+        {
+            return new StringValue(StripQuotes(text));
+            //return new StringValue(text);
+        }
+
+        private static string StripQuotes(String str)
+        {
+            return str.Substring(1, str.Length - 2);
+        }
+
+
+        private static NumericValue CreateIntNumericValueFromString(string intstring)
+        {
+            return NumericValue.Create(Convert.ToInt32(intstring));
+        }
+
 
         /// <summary>
         /// Enter the {{ ... }} filter
@@ -1617,7 +1715,7 @@ namespace Liquid.NET
         
         public override void EnterOutputexpression(LiquidParser.OutputexpressionContext context)
         {
-            //Console.WriteLine("* Entering Output Expression");
+            Console.WriteLine(Indent() + "> ENTER Output Expression");
             base.EnterOutputexpression(context);
             //StartNewLiquidExpressionTree();
             
@@ -1626,8 +1724,8 @@ namespace Liquid.NET
         public override void ExitOutputexpression(LiquidParser.OutputexpressionContext context)
         {
             //Console.WriteLine("* Exiting Output Expression");
-            base.ExitOutputexpression(context);            
-            //FinishLiquidExpressionTree();
+            base.ExitOutputexpression(context);
+            Console.WriteLine(Indent() + "< EXIT Output Expression");
         }
 
         public override void EnterStringFilterArg(LiquidParser.StringFilterArgContext context)
@@ -1637,6 +1735,7 @@ namespace Liquid.NET
             CurrentBuilderContext.LiquidExpressionBuilder.AddFilterArgToLastExpressionsFilter(
                 CreateObjectSimpleExpressionNode(
                 GenerateStringSymbol(context.GetText())));
+
         }
 
         public override void EnterNumberFilterArg(LiquidParser.NumberFilterArgContext context)
@@ -1666,33 +1765,11 @@ namespace Liquid.NET
             base.EnterVariableFilterArg(context);
             //Console.WriteLine("Enter VARIABLE FILTERARG >" + context.GetText() + "<");
 
-            //LiquidExpression expr = new LiquidExpression();  // create the holding expression
-            //CurrentBuilderContext.LiquidExpressionBuilder.AddFilterArgToLastExpressionsFilter(
-                //new TreeNode<LiquidExpression>(expr)); // add the (currently empty) expression to the list of vals
-            //var obj1 = obj; // avoid weird closure issue
             StartCapturingVariable(
                 context.variable(),
                     x => CurrentBuilderContext.LiquidExpressionBuilder.AddFilterArgToLastExpressionsFilter(
                       new TreeNode<LiquidExpression>(new LiquidExpression { Expression = x })));
-                //x => forBlock.Limit = new TreeNode<LiquidExpression>(new LiquidExpression { Expression = x }));
 
-
-//            varsToCapture.Push(() => // push onto a stack, later to be eval-ed in reverse order.
-//                StartCapturingVariable(
-//                    obj1.variable(),
-//                    x => expr.Expression = x));
-
-//            VariableReferenceTreeBuilder variableReferenceTreeBuilder = new VariableReferenceTreeBuilder();
-//            CurrentBuilderContext.VarReferenceTreeBuilder.Push(variableReferenceTreeBuilder);
-//            variableReferenceTreeBuilder.VariableReferenceTreeCompleteEvent +=
-//                x =>
-//                {
-//                    Console.WriteLine(">>> VariableReferenceTree Complete");
-//                    CurrentBuilderContext.LiquidExpressionBuilder.AddFilterArgToLastExpressionsFilter(
-//                           CreateObjectSimpleExpressionNode(x));
-//                    //AddExpressionToCurrentExpressionBuilder(x);
-//                    //MarkCurrentExpressionComplete();
-//                };
         }
 
         public override void ExitVariableFilterArg(LiquidParser.VariableFilterArgContext context)
@@ -1759,53 +1836,9 @@ namespace Liquid.NET
                 };
         }
 
-//        [Obsolete("Just use StartCapturingVariable with a callback")]
-//        private void StopCapturingVariable(LiquidParser.VariableContext variableContext)
-//        {
-//            Console.WriteLine(" ===> StopCapturingVariable: STOP CAPTURING VARIABLE " + variableContext.GetText());
-//            //CurrentBuilderContext.VarReferenceTreeBuilder.Peek().NotifyListenersOfConstructedVariable();
-//            //CurrentBuilderContext.VarReferenceTreeBuilder.Peek().EndVariable();
-//            //CurrentBuilderContext.VarReferenceTreeBuilder.Pop();
-//
-//        }
-//
-        public override void EnterVariableObject(LiquidParser.VariableObjectContext context)
-        {
-            base.EnterVariableObject(context);
-            Console.WriteLine(Indent() + "> ENTER VariableObject " + context.GetText());
+        //override Enter
 
-            var variableReferenceTreeBuilder = new VariableReferenceTreeBuilder();
-
-            CurrentBuilderContext.VarReferenceTreeBuilder.Push(variableReferenceTreeBuilder);
-            StartCapturingVariable(
-                context.variable(),
-                x =>
-                {
-                    AddExpressionToCurrentExpressionBuilder(x);
-                    MarkCurrentExpressionComplete();
-                    //CurrentBuilderContext.VarReferenceTreeBuilder.Peek().InvokeComplete(false);
-                });
-
-            // OK
-//            var variableReferenceTreeBuilder = new VariableReferenceTreeBuilder();
-//            CurrentBuilderContext.VarReferenceTreeBuilder.Push(variableReferenceTreeBuilder);
-//            variableReferenceTreeBuilder.VariableReferenceTreeCompleteEvent +=
-//                x =>
-//                {
-//                    AddExpressionToCurrentExpressionBuilder(x);
-//                    MarkCurrentExpressionComplete();
-//                };
-            // END OK
-        }
-
-        public override void ExitVariableObject(LiquidParser.VariableObjectContext context)
-        {
-            Console.WriteLine(Indent() + "< EXIT VariableObject " + context.GetText());
-            base.ExitVariableObject(context);
-            //CurrentBuilderContext.VarReferenceTreeBuilder.Peek().InvokeComplete(false);
-            CurrentBuilderContext.VarReferenceTreeBuilder.Pop();
-
-        }
+        
 
 
         /// <summary>
@@ -1829,7 +1862,7 @@ namespace Liquid.NET
             base.ExitVariable(variableContext);
             var varname = variableContext.VARIABLENAME().GetText();
             CurrentBuilderContext.VarReferenceTreeBuilder.Peek().EndVariable();
-            CurrentBuilderContext.VarReferenceTreeBuilder.Peek().InvokeComplete(true);
+            //CurrentBuilderContext.VarReferenceTreeBuilder.Peek().InvokeComplete();
             Console.WriteLine(Indent() + "< EXIT Variable "+varname);
         }
 
@@ -2165,11 +2198,15 @@ namespace Liquid.NET
                 }
             }
 
-            public void InvokeComplete(bool isEndVariable=true)
+            public void InvokeComplete()
             {
+                Console.WriteLine("LEVEL IS " + _level);
                 //if (isEndVariable && _endOnVariable)
                 //{
+                //if (_level == 0)
+                //{
                     InvokeVariableReferenceTreeCompleteEvent(Result);
+                //}
                 //}
             }
         }

@@ -195,14 +195,13 @@ filter:				(filtername ((COLON filterargs)?
 
 filterargs:			filterarg (COMMA filterarg)* ;
 
-object:				STRING									# StringObject
-					| NUMBER								# NumberObject
-					| BOOLEAN								# BooleanObject
-					| NULL									# NullObject		
-					| variable								# VariableObject
+object:				STRING									//# StringObject
+					| NUMBER								//# NumberObject
+					| BOOLEAN								//# BooleanObject
+					| NULL									//# NullObject		
+					| variable							//# VariableObject
 					;
 
- 
 objectvariableindex: ARRAYSTART arrayindex ARRAYEND
 					//| PERIOD (objectproperty | ISEMPTY) 
 					| PERIOD objectproperty
